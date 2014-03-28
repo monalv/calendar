@@ -32,16 +32,8 @@ layOutDay(events);
     /*Matching events to intervals in the interval[][]*/
     //Fixme: Increment by min_diff_between_2_events
     for(var i=0;i<events.length;i++){
-        // var startTime =  events[i].start,
-        //     endTime =  events[i].end;
+        //Fixme: Throw an error if start_time > end_time
         
-
-    //Fixme: Throw an error
-        // if(startTime > endTime){
-        //     temp = startTime;
-        //     startTime = endTime;
-        //     endTime = temp; 
-        // }
         //Fixme: Conflicts is a misnomer. 1 event != conflict
         events[i].conflicts = 0;
         for(var j=events[i].start ; j<events[i].end; j++){              
@@ -57,25 +49,15 @@ layOutDay(events);
     if (numOfEventsInInterval == 0) {
         continue;
     }
-    //console.log("i : " + i + " objects length : " + intervalArray[i].length);       
-    //Fixme: Why sort when the order is undecided
-    //intervalArray[i].sort(sortByOrder);
-    //console.log("SORTED");
-
-    // for (var j = 0; j < numOfEventsInInterval; j++) {
-    //     console.log(intervalArray[i][j]);
-    // }
 
     for (var j = 0; j < intervalArray[i].length; j++) {
         var current_event = intervalArray[i][j];
-        //console.log(current_event);
 
         if(current_event.conflicts < numOfEventsInInterval) {
             console.log("Current event has less conflicts:" + current_event.conflicts + "<" + numOfEventsInInterval)
             current_event.conflicts = numOfEventsInInterval;
         }
         else if(numOfEventsInInterval < current_event.conflicts) {
-            console.log("Caught error " + numOfEventsInInterval + "<" + current_event.conflicts);
             numOfEventsInInterval = current_event.conflicts;
         }
         if(!current_event.order) {
@@ -86,7 +68,7 @@ layOutDay(events);
         }
     }
   }
-  console.log("-----------------------");
+  console.log(">-----------------------<");
     
     /*Calculating thr positions and appending the DOM*/
   for (i=0; i<events.length; i++) {
