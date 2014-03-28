@@ -1,5 +1,5 @@
-/*
-Sample call for this function 
+
+// Sample call for this function 
 
 var events = [
  {start : 30, end : 150},  // an event from 9:30am to 11:30am
@@ -9,7 +9,7 @@ var events = [
 ];
 
 layOutDay(events);
-*/
+
 
   function layOutDay(events) {
    
@@ -85,20 +85,21 @@ layOutDay(events);
     current_event.y_px = current_event.start;
 
     var div = document.createElement("div");
+    div.setAttribute('id','event')
     div.style.width = current_event.width_px + "px";
     div.style.height = current_event.height_px + "px";
     div.style.top = current_event.y_px + "px";
     div.style.left = current_event.x_px + 10 +"px";
     div.style.position = "absolute";
 
-    div.style.background="#FFFFFF";
-    div.style["box-sizing"] = "border-box";
-    div.style.overflow="visible";
-    div.style["border-left"] ="2px solid rgb(75,110,169)";
-    div.style["border-top"] ="0.5px solid rgb(213,213,213)";
-    div.style["border-bottom"] ="0.5px solid rgb(213,213,213)";
-    div.style["border-right"] ="0.5px solid rgb(213,213,213)";              
-    div.style.color = "RGB(75,110,169)";
+    // div.style.background="#FFFFFF";
+    // div.style["box-sizing"] = "border-box";
+    // div.style.overflow="visible";
+    // div.style["border-left"] ="2px solid rgb(75,110,169)";
+    // div.style["border-top"] ="0.5px solid rgb(213,213,213)";
+    // div.style["border-bottom"] ="0.5px solid rgb(213,213,213)";
+    // div.style["border-right"] ="0.5px solid rgb(213,213,213)";              
+    // div.style.color = "RGB(75,110,169)";
 
     var text = "<p class=\"p1text\">Sample Item</p><p class=\"p2text\">Sample location</p>";
     div.innerHTML = text;

@@ -36,3 +36,12 @@
 	font-size:12px;
 	padding:2px 0;
 }
+#event{
+	background: #FFFFFF;
+	box-sizing: border-box;
+	border: 1px solid rgb(213,213,213);
+  border-left :2px solid rgb(75,110,169);
+  color: rgb(75,110,169);
+  position: absolute;
+  overflow:visible;
+}
