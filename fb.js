@@ -22,13 +22,8 @@ layOutDay(events);
     }
 
     events.sort(sortByStartTime);
-    var intervalArray = [];
-
-    /*Intializing an array[][] for every time interval (i.e from 9.00 am(0) to 9.00 pm(720))*/
-     for (var i=0; i<container_height; i++) {
-       intervalArray[i] = [];
-     }
-
+    var timeInterval = [];
+ 
     /*Matching events to intervals in the interval[][]*/
     //Fixme: Increment by min_diff_between_2_events
     for(var i=0;i<events.length;i++){
@@ -36,22 +31,26 @@ layOutDay(events);
         
         //Fixme: Conflicts is a misnomer. 1 event != conflict
         events[i].conflicts = 0;
-        for(var j=events[i].start ; j<events[i].end; j++){              
-            intervalArray[j].push(events[i]);           
+        for(var j=events[i].start ; j<events[i].end; j++){
+            timeInterval[j] = timeInterval[j] || [];
+            timeInterval[j].push(events[i]);           
         }
     }
 
     /*Finding out the conflicting events at each interval and also the horizontal order for the events*/
-  for (var i = 0; i < container_height; i+=10) {
-    var numOfEventsInInterval = intervalArray[i].length,
+    //Fixme: Increment by min_diff_between_2_events
+  for (var i = 0; i < container_height; i++) {
+    if(timeInterval[i] === undefined)
+        continue;
+    var numOfEventsInInterval = 0 || timeInterval[i].length,
         eventOccurenceNumber = 0;
 
     if (numOfEventsInInterval == 0) {
         continue;
     }
 
-    for (var j = 0; j < intervalArray[i].length; j++) {
-        var current_event = intervalArray[i][j];
+    for (var j = 0; j < timeInterval[i].length; j++) {
+        var current_event = timeInterval[i][j];
 
         if(current_event.conflicts < numOfEventsInInterval) {
             console.log("Current event has less conflicts:" + current_event.conflicts + "<" + numOfEventsInInterval)
