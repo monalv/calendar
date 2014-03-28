@@ -59,7 +59,7 @@ layOutDay(events);
     //console.log("i : " + i + " objects length : " + intervalArray[i].length);       
     //Fixme: Why sort when the order is undecided
     //intervalArray[i].sort(sortByOrder);
-    console.log("SORTED");
+    //console.log("SORTED");
 
     // for (var j = 0; j < numOfEventsInInterval; j++) {
     //     console.log(intervalArray[i][j]);
@@ -74,8 +74,8 @@ layOutDay(events);
             if(!current_event.order) {
                 current_event.order = eventOccurenceNumber;
                 console.log("inside i : "+i+" event : "+current_event)
+                eventOccurenceNumber++;
             }
-            eventOccurenceNumber++;
         }
     }
   }
