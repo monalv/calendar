@@ -42,6 +42,7 @@ layOutDay(events);
         //     startTime = endTime;
         //     endTime = temp; 
         // }
+        //Fixme: Conflicts is a misnomer. 1 event != conflict
         events[i].conflicts = 0;
         for(var j=events[i].start ; j<events[i].end; j++){              
             intervalArray[j].push(events[i]);           
@@ -65,16 +66,22 @@ layOutDay(events);
     //     console.log(intervalArray[i][j]);
     // }
 
-    for (var j = 0; j < numOfEventsInInterval; j++) {
+    for (var j = 0; j < intervalArray[i].length; j++) {
         var current_event = intervalArray[i][j];
-        console.log(current_event);
+        //console.log(current_event);
 
         if(current_event.conflicts < numOfEventsInInterval) {
+            console.log("Current event has less conflicts:" + current_event.conflicts + "<" + numOfEventsInInterval)
             current_event.conflicts = numOfEventsInInterval;
+        }
+        else if(numOfEventsInInterval < current_event.conflicts) {
+            console.log("Caught error " + numOfEventsInInterval + "<" + current_event.conflicts);
+            numOfEventsInInterval = current_event.conflicts;
         }
         if(!current_event.order) {
             current_event.order = eventOccurenceNumber;
-            console.log("inside i : "+i+" event : "+current_event)
+            console.log("inside i : "+i+" event : ");
+            console.dir(current_event);
             eventOccurenceNumber++;
         }
     }
