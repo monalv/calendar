@@ -31,6 +31,7 @@ function layOutDay(events) {
         
         //Fixme: Conflicts is a misnomer. 1 event != conflict
         events[i].conflicts = 0;
+        //Fixme: all conflicting events in same [j]; also add meta data for each [j].start & [j].end
         for(var j=events[i].start ; j<events[i].end; j++){
             timeInterval[j] = timeInterval[j] || [];
             timeInterval[j].push(events[i]);           
@@ -40,15 +41,10 @@ function layOutDay(events) {
     /*Finding out the conflicting events at each interval and also the horizontal order for the events*/
     //Fixme: Increment by min_diff_between_2_events
     for (var i = 0; i < container_height; i++) {
-        if(timeInterval[i] === undefined)
+        if(timeInterval[i] === undefined || timeInterval[i].length === 0)
             continue;
         var numOfEventsInInterval = 0 || timeInterval[i].length,
             eventOccurenceNumber = 0;
-
-        if (numOfEventsInInterval == 0) {
-            continue;
-        }
-
         for (var j = 0; j < timeInterval[i].length; j++) {
             var current_event = timeInterval[i][j];
 
