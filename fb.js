@@ -25,13 +25,10 @@ function layOutDay(events) {
     var timeInterval = [];
  
     /*Matching events to intervals in the interval[][]*/
-    //Fixme: Increment by min_diff_between_2_events
     for(var i=0;i<events.length;i++){
         //Fixme: Throw an error if start_time > end_time
-        
         //Fixme: Conflicts is a misnomer. 1 event != conflict
         events[i].conflicts = 0;
-        //Fixme: all conflicting events in same [j]; also add meta data for each [j].start & [j].end
         for(var j=events[i].start ; j<events[i].end; j++){
             timeInterval[j] = timeInterval[j] || [];
             timeInterval[j].push(events[i]);           
@@ -39,7 +36,7 @@ function layOutDay(events) {
     }
 
     /*Finding out the conflicting events at each interval and also the horizontal order for the events*/
-    //Fixme: Increment by min_diff_between_2_events
+    //Optimizeme: Increment by min_diff_between_2_events
     var numOfEventsInInterval;
     for (var i = 0; i < container_height; i++) {
         if(timeInterval[i] === undefined || timeInterval[i].length === 0)
@@ -51,7 +48,6 @@ function layOutDay(events) {
             var current_event = timeInterval[i][j];
 
             if(current_event.conflicts < numOfEventsInInterval) {
-                console.log("Current event has less conflicts:" + current_event.conflicts + "<" + numOfEventsInInterval)
                 current_event.conflicts = numOfEventsInInterval;
             }
             else if(numOfEventsInInterval < current_event.conflicts) {
@@ -59,14 +55,9 @@ function layOutDay(events) {
             }
             if(!current_event.order) {
                 current_event.order = eventOccurenceNumber;
-                console.log("inside i : "+i+" event : ");
-                console.dir(current_event);
                 eventOccurenceNumber++;
             }
         }
-        // timeInterval[i].forEach(function(entry){
-        //     entry.conflicts = numOfEventsInInterval;
-        // });
     }
     for(var i = 0; i < events.length-1; i++){
         var eventi = events[i];
@@ -84,12 +75,12 @@ function layOutDay(events) {
 }
 function renderEvent(events, container_width, parentDiv) {
     for (var i = 0; i < events.length; i++) {
-        current_event = x_pxevents[i];      
+        current_event = events[i];      
 
         //console.log(current_event);
         current_event.width_px = container_width / current_event.conflicts;     /*Total width of the calendar divided by the total no of events to be fit in that*/
-        current_event.height_px = current_event.end - current_event.start;
-        //FixMe : Left is not proper
+        current_event.height_px = current_event.end - current_event.start;      
+        //Fixme: left not being set -> ordering not correct
         current_event.x_px = current_event.order * current_event.width_px ;    /*left value determined by the order number of the event * the element width */
         current_event.y_px = current_event.start;
 
