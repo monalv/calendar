@@ -1,0 +1,13 @@
+9.30 am - 11.30 am
+6.00 pm - 7.00 pm
+6.20 pm - 7.20 pm
+7.10 pm - 8.10 pm
+
+layOutDay([
+ {start : 600, end : 680}, //7.00 pm  to 8.20 pm 
+ {start : 350, end : 690}, // 2.50 pm to 8.30
+ {start : 660, end : 680},  8.00 pm to 8.20 pm
+ {start : 300, end : 400}, // 7.40 pm to 8.40 pm
+ {start : 610, end : 700} // 7.10 pm to 8.40 pm
+]);
+
