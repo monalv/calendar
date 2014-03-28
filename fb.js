@@ -30,50 +30,52 @@ layOutDay(events);
      }
 
     /*Matching events to intervals in the interval[][]*/
+    //Fixme: Increment by min_diff_between_2_events
     for(var i=0;i<events.length;i++){
-        var startTime =  events[i].start,
-            endTime =  events[i].end;
-            events[i].conflicts = 0;
+        // var startTime =  events[i].start,
+        //     endTime =  events[i].end;
+        
 
     //Fixme: Throw an error
-        if(startTime > endTime){
-            temp = startTime;
-            startTime = endTime;
-            endTime = temp; 
-        }
-    
-        for(var j=startTime ; j<endTime; j++){              
+        // if(startTime > endTime){
+        //     temp = startTime;
+        //     startTime = endTime;
+        //     endTime = temp; 
+        // }
+        events[i].conflicts = 0;
+        for(var j=events[i].start ; j<events[i].end; j++){              
             intervalArray[j].push(events[i]);           
         }
     }
 
     /*Finding out the conflicting events at each interval and also the horizontal order for the events*/
   for (var i = 0; i < container_height; i+=10) {
-    var numOfEventsInInterval = intervalArray[i].length;
-    var eventOccurenceNumber = 0;
+    var numOfEventsInInterval = intervalArray[i].length,
+        eventOccurenceNumber = 0;
 
-    if (numOfEventsInInterval > 0) {
+    if (numOfEventsInInterval == 0) {
+        continue;
+    }
       //console.log("i : " + i + " objects length : " + intervalArray[i].length);       
-      intervalArray[i].sort(sortByOrder);
-      console.log("SORTED");
-      
-      // for (var j = 0; j < numOfEventsInInterval; j++) {
-      //     console.log(intervalArray[i][j]);
-      // }
+    intervalArray[i].sort(sortByOrder);
+    console.log("SORTED");
 
-      for (var j = 0; j < numOfEventsInInterval; j++) {
+    // for (var j = 0; j < numOfEventsInInterval; j++) {
+    //     console.log(intervalArray[i][j]);
+    // }
+
+    for (var j = 0; j < numOfEventsInInterval; j++) {
         var current_event = intervalArray[i][j];
         console.log(current_event);
-        
-        if (current_event.conflicts < numOfEventsInInterval) {
-          current_event.conflicts = numOfEventsInInterval;
-          if(!current_event.order){
-            current_event.order = eventOccurenceNumber;
-            console.log("inside i : "+i+" event : "+current_event)
-          }
-          eventOccurenceNumber++;
+
+        if(current_event.conflicts < numOfEventsInInterval) {
+            current_event.conflicts = numOfEventsInInterval;
+            if(!current_event.order) {
+                current_event.order = eventOccurenceNumber;
+                console.log("inside i : "+i+" event : "+current_event)
+            }
+            eventOccurenceNumber++;
         }
-      }
     }
   }
   console.log("-----------------------");
