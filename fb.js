@@ -5,7 +5,7 @@ var events = [
  {start : 30, end : 150},  // an event from 9:30am to 11:30am
  {start : 540, end : 600}, // an event from 6pm to 7pm
  {start : 560, end : 620}, // an event from 6:20pm to 7:20pm
- {start : 610, end : 670} // an event from 7:10pm to 8:10pm
+ {start : 100, end : 670} // an event from 7:10pm to 8:10pm
 ];
 
 layOutDay(events);
@@ -40,11 +40,13 @@ function layOutDay(events) {
 
     /*Finding out the conflicting events at each interval and also the horizontal order for the events*/
     //Fixme: Increment by min_diff_between_2_events
+    var numOfEventsInInterval;
     for (var i = 0; i < container_height; i++) {
         if(timeInterval[i] === undefined || timeInterval[i].length === 0)
             continue;
-        var numOfEventsInInterval = 0 || timeInterval[i].length,
-            eventOccurenceNumber = 0;
+        var eventOccurenceNumber = 0;
+        numOfEventsInInterval = 0 || timeInterval[i].length;
+
         for (var j = 0; j < timeInterval[i].length; j++) {
             var current_event = timeInterval[i][j];
 
@@ -62,18 +64,32 @@ function layOutDay(events) {
                 eventOccurenceNumber++;
             }
         }
+        // timeInterval[i].forEach(function(entry){
+        //     entry.conflicts = numOfEventsInInterval;
+        // });
     }
+    for(var i = 0; i < events.length-1; i++){
+        var eventi = events[i];
+        for(var j = i+1; j < events.length; j++){
+            var eventj = events[j];
+            if(isConflict(eventi,eventj)){
+                eventi.conflicts = eventj.conflicts = Math.max(eventj.conflicts,eventi.conflicts);
+            }
+        }
+    }
+    console.dir(events);
     console.log(">-----------------------<");
     /*Calculating the propotions of the event and appending the DOM*/
     renderEvent(events, container_width, parentDiv);  
 }
 function renderEvent(events, container_width, parentDiv) {
-    for (i=0; i<events.length; i++) {
-        current_event = events[i];      
+    for (var i = 0; i < events.length; i++) {
+        current_event = x_pxevents[i];      
 
         //console.log(current_event);
         current_event.width_px = container_width / current_event.conflicts;     /*Total width of the calendar divided by the total no of events to be fit in that*/
-        current_event.height_px = current_event.end - current_event.start;      
+        current_event.height_px = current_event.end - current_event.start;
+        //FixMe : Left is not proper
         current_event.x_px = current_event.order * current_event.width_px ;    /*left value determined by the order number of the event * the element width */
         current_event.y_px = current_event.start;
 
@@ -89,7 +105,15 @@ function renderEvent(events, container_width, parentDiv) {
         parentDiv.appendChild(div);
     }
 }
-
+function isConflict(a,b) {
+    if(a.start == b.start || a.end == b.end)
+        return true;
+    else if(a.start < b.start && b.start < a.end)
+        return true;
+    else if(b.start < a.start && a.start < b.end)
+        return true;
+    return false;
+}
 function sortByStartTime(a,b) {
     return a.start-b.start;
 }
