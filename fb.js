@@ -11,7 +11,7 @@ var events = [
 layOutDay(events);
 
 
-  function layOutDay(events) {
+function layOutDay(events) {
     var container_width = 600,
         container_height = 720;
 
@@ -39,57 +39,59 @@ layOutDay(events);
 
     /*Finding out the conflicting events at each interval and also the horizontal order for the events*/
     //Fixme: Increment by min_diff_between_2_events
-  for (var i = 0; i < container_height; i++) {
-    if(timeInterval[i] === undefined)
-        continue;
-    var numOfEventsInInterval = 0 || timeInterval[i].length,
-        eventOccurenceNumber = 0;
+    for (var i = 0; i < container_height; i++) {
+        if(timeInterval[i] === undefined)
+            continue;
+        var numOfEventsInInterval = 0 || timeInterval[i].length,
+            eventOccurenceNumber = 0;
 
-    if (numOfEventsInInterval == 0) {
-        continue;
+        if (numOfEventsInInterval == 0) {
+            continue;
+        }
+
+        for (var j = 0; j < timeInterval[i].length; j++) {
+            var current_event = timeInterval[i][j];
+
+            if(current_event.conflicts < numOfEventsInInterval) {
+                console.log("Current event has less conflicts:" + current_event.conflicts + "<" + numOfEventsInInterval)
+                current_event.conflicts = numOfEventsInInterval;
+            }
+            else if(numOfEventsInInterval < current_event.conflicts) {
+                numOfEventsInInterval = current_event.conflicts;
+            }
+            if(!current_event.order) {
+                current_event.order = eventOccurenceNumber;
+                console.log("inside i : "+i+" event : ");
+                console.dir(current_event);
+                eventOccurenceNumber++;
+            }
+        }
     }
+    console.log(">-----------------------<");
+    /*Calculating the propotions of the event and appending the DOM*/
+    renderEvent(events, container_width, parentDiv);  
+}
+function renderEvent(events, container_width, parentDiv) {
+    for (i=0; i<events.length; i++) {
+        current_event = events[i];      
 
-    for (var j = 0; j < timeInterval[i].length; j++) {
-        var current_event = timeInterval[i][j];
+        //console.log(current_event);
+        current_event.width_px = container_width / current_event.conflicts;     /*Total width of the calendar divided by the total no of events to be fit in that*/
+        current_event.height_px = current_event.end - current_event.start;      
+        current_event.x_px = current_event.order * current_event.width_px ;    /*left value determined by the order number of the event * the element width */
+        current_event.y_px = current_event.start;
 
-        if(current_event.conflicts < numOfEventsInInterval) {
-            console.log("Current event has less conflicts:" + current_event.conflicts + "<" + numOfEventsInInterval)
-            current_event.conflicts = numOfEventsInInterval;
-        }
-        else if(numOfEventsInInterval < current_event.conflicts) {
-            numOfEventsInInterval = current_event.conflicts;
-        }
-        if(!current_event.order) {
-            current_event.order = eventOccurenceNumber;
-            console.log("inside i : "+i+" event : ");
-            console.dir(current_event);
-            eventOccurenceNumber++;
-        }
+        var div = document.createElement("div");
+        div.setAttribute('id','event')
+        div.style.width = current_event.width_px + "px";
+        div.style.height = current_event.height_px + "px";
+        div.style.top = current_event.y_px + "px";
+        div.style.left = current_event.x_px + 10 +"px";
+
+        var text = "<p class=\"p1text\">Sample Item " + i + "</p><p class=\"p2text\">Sample location@" + current_event.start + "-" + current_event.end + "</p>";
+        div.innerHTML = text;
+        parentDiv.appendChild(div);
     }
-  }
-  console.log(">-----------------------<");
-    
-    /*Calculating thr positions and appending the DOM*/
-  for (i=0; i<events.length; i++) {
-    current_event = events[i];      
-
-    //console.log(current_event);
-    current_event.width_px = container_width / current_event.conflicts;     /*Total width of the calendar divided by the total no of events to be fit in that*/
-    current_event.height_px = current_event.end - current_event.start;      
-    current_event.x_px = current_event.order * current_event.width_px ;    /*left value determined by the order number of the event * the element width */
-    current_event.y_px = current_event.start;
-
-    var div = document.createElement("div");
-    div.setAttribute('id','event')
-    div.style.width = current_event.width_px + "px";
-    div.style.height = current_event.height_px + "px";
-    div.style.top = current_event.y_px + "px";
-    div.style.left = current_event.x_px + 10 +"px";
-
-    var text = "<p class=\"p1text\">Sample Item " + i + "</p><p class=\"p2text\">Sample location@" + current_event.start + "-" + current_event.end + "</p>";
-    div.innerHTML = text;
-    parentDiv.appendChild(div);
-  }
 }
 
 function sortByStartTime(a,b) {
