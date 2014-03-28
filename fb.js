@@ -56,8 +56,9 @@ layOutDay(events);
     if (numOfEventsInInterval == 0) {
         continue;
     }
-      //console.log("i : " + i + " objects length : " + intervalArray[i].length);       
-    intervalArray[i].sort(sortByOrder);
+    //console.log("i : " + i + " objects length : " + intervalArray[i].length);       
+    //Fixme: Why sort when the order is undecided
+    //intervalArray[i].sort(sortByOrder);
     console.log("SORTED");
 
     // for (var j = 0; j < numOfEventsInInterval; j++) {
