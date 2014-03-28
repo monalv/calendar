@@ -71,11 +71,11 @@ layOutDay(events);
 
         if(current_event.conflicts < numOfEventsInInterval) {
             current_event.conflicts = numOfEventsInInterval;
-            if(!current_event.order) {
-                current_event.order = eventOccurenceNumber;
-                console.log("inside i : "+i+" event : "+current_event)
-                eventOccurenceNumber++;
-            }
+        }
+        if(!current_event.order) {
+            current_event.order = eventOccurenceNumber;
+            console.log("inside i : "+i+" event : "+current_event)
+            eventOccurenceNumber++;
         }
     }
   }
