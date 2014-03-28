@@ -12,7 +12,9 @@ layOutDay(events);
 
 
   function layOutDay(events) {
-   
+    var container_width = 600,
+        container_height = 720;
+        
   /*resetting the previous elements in the calendar if any*/
   var parentDiv = document.getElementById("calendar_block");
 	while (parentDiv.firstChild) {
@@ -21,35 +23,36 @@ layOutDay(events);
 
 	var intervalArray = [];
 
-	/*Two dimensional array*/
-	/*Intializing an array for every time interval (i.e from 9.00 am(0) to 9.00 pm(720))*/
-     for (var i=0; i<720; i++) {
+	/*Intializing an array[][] for every time interval (i.e from 9.00 am(0) to 9.00 pm(720))*/
+     for (var i=0; i<container_height; i++) {
        intervalArray[i] = [];
      }
 
-	/*Putting events in each of the corresponding interval array*/
+	/*Matching events to intervals in the interval[][]*/
 	for(var i=0;i<events.length;i++){
 		var current_event = events[i];
 		var startTime =  current_event.start;
 		var endTime =  current_event.end;
 
+    //Fixme: Throw an error
 		if(startTime > endTime){
 			temp = startTime;
 			startTime = endTime;
 			endTime = temp;	
 		}
+    
 		for(var j=startTime ; j<endTime; j++){				
 			intervalArray[j].push(events[i]);			
 		}
 	}
 
 	/*Finding out the conflicting events at each interval and also the horizontal order for the events*/
-  for (var i = 0; i < 720; i++) {
+  for (var i = 0; i < container_height; i++) {
     var interval_length = intervalArray[i].length;
     var order_count = 0;
 
     if (interval_length > 0) {
-      console.log("i : "+i+" objects length : "+intervalArray[i].length);       
+      console.log("i : " + i + " objects length : " + intervalArray[i].length);       
       intervalArray[i].sort(sortingOrder);
       console.log("SORTED");
       
@@ -79,7 +82,7 @@ layOutDay(events);
     current_event = events[i];      
 
     console.log(current_event);
-    current_event.width_px = 600 / current_event.conflict;   /*Total width of the calendar divided by the total no of events to be fit in that*/
+    current_event.width_px = container_width / current_event.conflict;   /*Total width of the calendar divided by the total no of events to be fit in that*/
     current_event.height_px = current_event.end - current_event.start; /*left value determined by the order number of the event * the element width */
     current_event.x_px = current_event.order * current_event.width_px ;    
     current_event.y_px = current_event.start;
@@ -90,18 +93,8 @@ layOutDay(events);
     div.style.height = current_event.height_px + "px";
     div.style.top = current_event.y_px + "px";
     div.style.left = current_event.x_px + 10 +"px";
-    div.style.position = "absolute";
 
-    // div.style.background="#FFFFFF";
-    // div.style["box-sizing"] = "border-box";
-    // div.style.overflow="visible";
-    // div.style["border-left"] ="2px solid rgb(75,110,169)";
-    // div.style["border-top"] ="0.5px solid rgb(213,213,213)";
-    // div.style["border-bottom"] ="0.5px solid rgb(213,213,213)";
-    // div.style["border-right"] ="0.5px solid rgb(213,213,213)";              
-    // div.style.color = "RGB(75,110,169)";
-
-    var text = "<p class=\"p1text\">Sample Item</p><p class=\"p2text\">Sample location</p>";
+    var text = "<p class=\"p1text\">Sample Item " + i + "</p><p class=\"p2text\">Sample location</p>";
     div.innerHTML = text;
     parentDiv.appendChild(div);
   }
