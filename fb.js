@@ -2,14 +2,16 @@
 // Sample call for this function 
 
 var events = [
- {start : 30, end : 150},  // an event from 9:30am to 11:30am
- {start : 540, end : 600}, // an event from 6pm to 7pm
- {start : 560, end : 620}, // an event from 6:20pm to 7:20pm
- {start : 100, end : 670} // an event from 7:10pm to 8:10pm
+ {start : 530, end : 700}, 
+ {start : 30, end : 150},  
+ {start : 300, end : 600}, 
+ {start : 560, end : 620}, 
+ {start : 100, end : 670}, 
+ {start : 120, end : 300}, 
+ {start : 400, end : 450} 
 ];
 
 layOutDay(events);
-
 
 function layOutDay(events) {
     var container_width = 600,
@@ -29,9 +31,14 @@ function layOutDay(events) {
         //Fixme: Throw an error if start_time > end_time
         //Fixme: Conflicts is a misnomer. 1 event != conflict
         events[i].conflicts = 0;
-        for(var j=events[i].start ; j<events[i].end; j++){
-            timeInterval[j] = timeInterval[j] || [];
-            timeInterval[j].push(events[i]);           
+        if(events[i].start>events[i].end){
+            alert("error : start time of an event is greater than end time");   
+        }
+        else{
+            for(var j=events[i].start ; j<events[i].end; j++){
+                timeInterval[j] = timeInterval[j] || [];
+                timeInterval[j].push(events[i]);           
+            }
         }
     }
 
@@ -44,9 +51,17 @@ function layOutDay(events) {
         var eventOccurenceNumber = 0;
         numOfEventsInInterval = 0 || timeInterval[i].length;
 
+        timeInterval[i].sort(sortByOrder);
+        /*
+        console.log("SORTED");
+        for (var j = 0; j < timeInterval[i].length; j++) {
+            console.log("i : "+i+" j : "+j);
+            console.log(timeInterval[i][j]);                  
+        }
+        */
+        var eventOrderMap = {};
         for (var j = 0; j < timeInterval[i].length; j++) {
             var current_event = timeInterval[i][j];
-
             if(current_event.conflicts < numOfEventsInInterval) {
                 current_event.conflicts = numOfEventsInInterval;
             }
@@ -54,8 +69,15 @@ function layOutDay(events) {
                 numOfEventsInInterval = current_event.conflicts;
             }
             if(!current_event.order) {
+                while(eventOccurenceNumber in eventOrderMap){
+                    eventOccurenceNumber++;
+                } 
                 current_event.order = eventOccurenceNumber;
-                eventOccurenceNumber++;
+                eventOrderMap[current_event.order]=true;                
+                eventOccurenceNumber++;           
+            }
+            else{
+                eventOrderMap[current_event.order]=true;
             }
         }
     }
@@ -77,7 +99,6 @@ function renderEvent(events, container_width, parentDiv) {
     for (var i = 0; i < events.length; i++) {
         current_event = events[i];      
 
-        //console.log(current_event);
         current_event.width_px = container_width / current_event.conflicts;     /*Total width of the calendar divided by the total no of events to be fit in that*/
         current_event.height_px = current_event.end - current_event.start;      
         //Fixme: left not being set -> ordering not correct
@@ -109,5 +130,5 @@ function sortByStartTime(a,b) {
     return a.start-b.start;
 }
 function sortByOrder(a,b) {
-  return (a.order!==undefined && b.order!==undefined)?a.order-b.order: (a.order?-1:1);
+  return (a.order!==undefined && b.order!==undefined)?a.order-b.order: ((a.order!==undefined)?-1:1);
 }
