@@ -14,77 +14,78 @@ layOutDay(events);
   function layOutDay(events) {
     var container_width = 600,
         container_height = 720;
-        
+
   /*resetting the previous elements in the calendar if any*/
   var parentDiv = document.getElementById("calendar_block");
-	while (parentDiv.firstChild) {
-    	parentDiv.removeChild(parentDiv.firstChild);
-	}
+    while (parentDiv.firstChild) {
+        parentDiv.removeChild(parentDiv.firstChild);
+    }
 
-	var intervalArray = [];
+    events.sort(sortByStartTime);
+    var intervalArray = [];
 
-	/*Intializing an array[][] for every time interval (i.e from 9.00 am(0) to 9.00 pm(720))*/
+    /*Intializing an array[][] for every time interval (i.e from 9.00 am(0) to 9.00 pm(720))*/
      for (var i=0; i<container_height; i++) {
        intervalArray[i] = [];
      }
 
-	/*Matching events to intervals in the interval[][]*/
-	for(var i=0;i<events.length;i++){
-		var current_event = events[i];
-		var startTime =  current_event.start;
-		var endTime =  current_event.end;
+    /*Matching events to intervals in the interval[][]*/
+    for(var i=0;i<events.length;i++){
+        var startTime =  events[i].start,
+            endTime =  events[i].end;
+            events[i].conflicts = 0;
 
     //Fixme: Throw an error
-		if(startTime > endTime){
-			temp = startTime;
-			startTime = endTime;
-			endTime = temp;	
-		}
+        if(startTime > endTime){
+            temp = startTime;
+            startTime = endTime;
+            endTime = temp; 
+        }
     
-		for(var j=startTime ; j<endTime; j++){				
-			intervalArray[j].push(events[i]);			
-		}
-	}
+        for(var j=startTime ; j<endTime; j++){              
+            intervalArray[j].push(events[i]);           
+        }
+    }
 
-	/*Finding out the conflicting events at each interval and also the horizontal order for the events*/
-  for (var i = 0; i < container_height; i++) {
-    var interval_length = intervalArray[i].length;
-    var order_count = 0;
+    /*Finding out the conflicting events at each interval and also the horizontal order for the events*/
+  for (var i = 0; i < container_height; i+=10) {
+    var numOfEventsInInterval = intervalArray[i].length;
+    var eventOccurenceNumber = 0;
 
-    if (interval_length > 0) {
-      console.log("i : " + i + " objects length : " + intervalArray[i].length);       
-      intervalArray[i].sort(sortingOrder);
+    if (numOfEventsInInterval > 0) {
+      //console.log("i : " + i + " objects length : " + intervalArray[i].length);       
+      intervalArray[i].sort(sortByOrder);
       console.log("SORTED");
       
-      for (var j = 0; j < interval_length; j++) {
-          console.log(intervalArray[i][j]);
-      }
+      // for (var j = 0; j < numOfEventsInInterval; j++) {
+      //     console.log(intervalArray[i][j]);
+      // }
 
-      for (var j = 0; j < interval_length; j++) {
+      for (var j = 0; j < numOfEventsInInterval; j++) {
         var current_event = intervalArray[i][j];
         console.log(current_event);
         
-        if (!current_event.conflict || current_event.conflict < interval_length) {
-       	  current_event.conflict = interval_length;		
-       	  if(!current_event.order){
-            current_event.order = order_count;
+        if (current_event.conflicts < numOfEventsInInterval) {
+          current_event.conflicts = numOfEventsInInterval;
+          if(!current_event.order){
+            current_event.order = eventOccurenceNumber;
             console.log("inside i : "+i+" event : "+current_event)
           }
-          order_count++;
+          eventOccurenceNumber++;
         }
       }
     }
   }
   console.log("-----------------------");
     
-	/*Calculating thr positions and appending the DOM*/
+    /*Calculating thr positions and appending the DOM*/
   for (i=0; i<events.length; i++) {
     current_event = events[i];      
 
-    console.log(current_event);
-    current_event.width_px = container_width / current_event.conflict;   /*Total width of the calendar divided by the total no of events to be fit in that*/
-    current_event.height_px = current_event.end - current_event.start; /*left value determined by the order number of the event * the element width */
-    current_event.x_px = current_event.order * current_event.width_px ;    
+    //console.log(current_event);
+    current_event.width_px = container_width / current_event.conflicts;     /*Total width of the calendar divided by the total no of events to be fit in that*/
+    current_event.height_px = current_event.end - current_event.start;      
+    current_event.x_px = current_event.order * current_event.width_px ;    /*left value determined by the order number of the event * the element width */
     current_event.y_px = current_event.start;
 
     var div = document.createElement("div");
@@ -94,27 +95,15 @@ layOutDay(events);
     div.style.top = current_event.y_px + "px";
     div.style.left = current_event.x_px + 10 +"px";
 
-    var text = "<p class=\"p1text\">Sample Item " + i + "</p><p class=\"p2text\">Sample location</p>";
+    var text = "<p class=\"p1text\">Sample Item " + i + "</p><p class=\"p2text\">Sample location@" + current_event.start + "-" + current_event.end + "</p>";
     div.innerHTML = text;
     parentDiv.appendChild(div);
   }
 }
 
- function sortingOrder(a,b) {
-  var shouldBeSorted = (a.order!==undefined && b.order!==undefined)?a.order-b.order: (a.order?-1:1);
-  return shouldBeSorted;
+function sortByStartTime(a,b) {
+    return a.start-b.start;
 }
-function sortByOrder(a,b){
-
-  console.log("sorting");
-  if(a.order === undefined){
-    console.log("inside !a.order : "+a.order+" "+b.order);
-    return 1;
-  }
-  else if(!b.order === undefined){    
-    console.log("inside !b.order : "+a.order+" "+b.order);
-    return -1;
-  }
- console.log("outside ! : "+a.order+" "+b.order);
-  return (a.order - b.order);
+function sortByOrder(a,b) {
+  return (a.order!==undefined && b.order!==undefined)?a.order-b.order: (a.order?-1:1);
 }
